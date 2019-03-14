@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+  before_install:
+    -docker build -t darnock/react-test -f ./client/Dockerfile.dev ./client
+
+script: 
+  - docker run docker/react-test npm run test -- --coverage
+
+after_success:
+  - docker build -t darnock/docker-multi-client ./client
+  - docker build -t darnock/docker-multi-nginx ./nginx
+  - docker build -t darnock/docker-multi-server ./server
+  - docker build -t darnock/docker-multi-worker ./worker
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  - docker push darnock/docker-multi-client
+  - docker push darnock/docker-multi-nginx
+  - docker push darnock/docker-multi-server
+  - docker push darnock/docker-multi-worker
