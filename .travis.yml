@@ -6,7 +6,7 @@ before_install:
   - docker build -t darnock/react-test -f ./client/Dockerfile.dev ./client
 
 script: 
-  - docker run docker/react-test npm run test -- --coverage
+  - docker run darnock/react-test npm run test -- --coverage
 
 after_success:
   - docker build -t darnock/docker-multi-client ./client
